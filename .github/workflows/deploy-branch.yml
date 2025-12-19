@@ -1,15 +1,19 @@
-name: Build on push
+name: Build and deploy to deploy branch
 
 on:
   push:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Node
@@ -23,3 +27,11 @@ jobs:
 
       - name: Build project
         run: npm run build
+
+      # ? 核心：把 dist 推送到 deploy 分支
+      - name: Deploy dist to deploy branch
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: deploy
+          folder: dist
+          clean: true
